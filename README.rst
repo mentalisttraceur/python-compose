@@ -30,10 +30,6 @@ as is normal for Python modules.
 Installation
 ------------
 
-**Note**: this is pending `my PEP-541 request
-<https://github.com/pypa/pypi-support/issues/95>`_,
-and may change if that is rejected.
-
 ::
 
     pip install compose
