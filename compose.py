@@ -11,7 +11,7 @@
 # ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 # OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-"""Just the classic `compose`, but with all the Pythonic bells and whistles."""
+"""The classic ``compose``, with all the Pythonic features."""
 
 
 __all__ = ('compose',)
