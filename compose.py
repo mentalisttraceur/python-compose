@@ -19,7 +19,7 @@ __version__ = '1.0.0'
 
 
 def _name(obj):
-    return repr(type(obj).__name__)
+    return type(obj).__name__
 
 
 class compose(object):
@@ -42,11 +42,13 @@ class compose(object):
 
     def __init__(self, *functions):
         if not functions:
-            raise TypeError(_name(self) + ' needs at least one argument')
+            name = _name(self)
+            raise TypeError(repr(name) + ' needs at least one argument')
         _functions = []
         for function in functions[::-1]:
             if not callable(function):
-                raise TypeError(_name(self) + ' arguments must be callable')
+                name = _name(self)
+                raise TypeError(repr(name) + ' arguments must be callable')
             if isinstance(function, compose):
                 _functions.extend(function.functions)
             else:
@@ -62,7 +64,7 @@ class compose(object):
         return result
 
     def __repr__(self):
-        return 'compose' + repr(self.functions[::-1])
+        return _name(self) + repr(self.functions[::-1])
 
     @property
     def functions(self):
