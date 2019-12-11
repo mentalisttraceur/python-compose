@@ -69,3 +69,10 @@ class compose(object):
     @property
     def functions(self):
         return (self.__wrapped__,) + self._wrappers
+
+
+# Portability to some minimal Python implementations:
+try:
+    compose.__name__
+except AttributeError:
+    compose.__name__ = 'compose'
