@@ -13,6 +13,13 @@
 
 """The classic ``compose``, with all the Pythonic features."""
 
+try:
+    from functools import recursive_repr as _recursive_repr
+    _recursive_repr_if_available = _recursive_repr()
+except ImportError:
+    def _recursive_repr_if_available(function):
+        return function
+
 
 __all__ = ('compose',)
 __version__ = '1.0.0'
@@ -63,6 +70,7 @@ class compose(object):
             result = function(result)
         return result
 
+    @_recursive_repr_if_available
     def __repr__(self):
         return _name(self) + repr(self.functions[::-1])
 
