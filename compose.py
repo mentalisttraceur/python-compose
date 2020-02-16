@@ -72,7 +72,8 @@ class compose(object):
 
     @_recursive_repr_if_available
     def __repr__(self):
-        return _name(self) + repr(self.functions[::-1])
+        arguments = ', '.join(map(repr, self.functions[::-1]))
+        return _name(self) + '(' + arguments + ')'
 
     @property
     def functions(self):
