@@ -52,7 +52,7 @@ class compose(object):
             name = _name(self)
             raise TypeError(repr(name) + ' needs at least one argument')
         _functions = []
-        for function in functions[::-1]:
+        for function in reversed(functions):
             if not callable(function):
                 name = _name(self)
                 raise TypeError(repr(name) + ' arguments must be callable')
@@ -72,7 +72,7 @@ class compose(object):
 
     @_recursive_repr_if_available
     def __repr__(self):
-        arguments = ', '.join(map(repr, self.functions[::-1]))
+        arguments = ', '.join(map(repr, reversed(self.functions)))
         return _name(self) + '(' + arguments + ')'
 
     @property
