@@ -10,7 +10,8 @@ and returns callable ``compose`` objects which:
 * retain correct signature introspection,
 * allow introspection of the composed callables,
 * can be type-checked,
-* merge when nested, and
+* can still be weakly referenced and have attributes,
+* will merge when nested, and
 * can be pickled (if all composed callables can be pickled).
 
 This `compose` also fails fast with a ``TypeError`` if any
