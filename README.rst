@@ -141,17 +141,18 @@ Design Decisions
 
      but going the other way is less trivial.
 
-* Despite ``compose()`` being an error, ``__init__(self, *functions)__``
-  is used instead of ``__init__(self, function, *functions)__``
-  to produce a reliably nice and clear error message for that error.
+* Using ``__init__(self, *functions)`` instead of
+  ``__init__(self, function, *functions)`` because manual control is
+  needed to reliably produce a sufficiently helpful and clear error
+  message in the event that ``compose()`` is called with no arguments.
 
 * Using ``functools.recursive_repr`` if available because if recursion
-  somehow ever happens, having a working and recursion-safe ``__repr__``
+  happens (unlikely), having a working and recursion-safe ``__repr__``
   would likely be extremely helpful for debugging and code robustness.
 
   Not going beyond that because the code involved would be complex and
-  not portable across Python implementations and the right place for
-  that is a separate polyfil, monkey-patched or added in manually.
+  not portable across Python implementations, and the right place to
+  solve that is a separate polyfil if at all possible.
 
 * Manually getting ``self`` from ``*args`` in ``__call__``
   portably makes ``self`` a positional-only argument.
