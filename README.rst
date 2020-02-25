@@ -162,9 +162,6 @@ Design Decisions
   function composition should still work correctly - in this case,
   silent seemingly-successful unintended misbehavior would be awful.
 
-  This is the same care we see taken in the
-  implementation of ``functools.partial``.
-
 * Not using ``__slots__`` because:
 
   1. ``__wrapped__`` cannot be in ``__slots__`` because that has
