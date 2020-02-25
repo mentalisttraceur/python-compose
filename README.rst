@@ -14,7 +14,7 @@ and returns callable ``compose`` objects which:
 * will merge when nested, and
 * can be pickled (if all composed callables can be pickled).
 
-This `compose` also fails fast with a ``TypeError`` if any
+This ``compose`` also fails fast with a ``TypeError`` if any
 argument is not callable, or when called with no arguments.
 
 
@@ -173,8 +173,8 @@ Design Decisions
     when trying to get non-existent attributes relative to other
     typical objects, and did not seem to actually perform better.
 
-  3. Due to ``__wrapped__``, ``__dict__`` will always be created
+  3. Due to the above two reasons, ``__dict__`` will always be created
     and initialized in ``__init__``, so it would not save space.
 
-  4. For what `compose` is doing, using ``__slots__`` does not
+  4. For what ``compose`` is doing, using ``__slots__`` does not
     seem to significantly increase execution speed anyway.
