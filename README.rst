@@ -176,5 +176,5 @@ Design Decisions
   3. Due to ``__wrapped__``, ``__dict__`` will always be created
     and initialized in ``__init__``, so it would not save space.
 
-  4. In my tests, using ``__slots__`` did not even produce
-    reliably better runtimes than the regular version.
+  4. For what `compose` is doing, using ``__slots__`` does not
+    seem to significantly increase execution speed anyway.
