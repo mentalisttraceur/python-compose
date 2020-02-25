@@ -135,10 +135,11 @@ Design Decisions
 
   2. It is the more flexible way: people can do
 
-    .. code:: python
-        compose = partial(compose, identity)
+     .. code:: python
 
-    but going the other way is less trivial.
+         compose = partial(compose, identity)
+
+     but going the other way is less trivial.
 
 * Despite ``compose()`` being an error, ``__init__(self, *functions)__``
   is used instead of ``__init__(self, function, *functions)__``
@@ -166,15 +167,15 @@ Design Decisions
 * Not using ``__slots__`` because:
 
   1. ``__wrapped__`` cannot be in ``__slots__`` because that has
-    the same problem as making it a ``@property`` (see above).
+     the same problem as making it a ``@property`` (see above).
 
   2. ``__wrapped__`` can be implemented with ``__getattr__``,
-    but this would cause an inconsistent error string or traceback
-    when trying to get non-existent attributes relative to other
-    typical objects, and did not seem to actually perform better.
+     but this would cause an inconsistent error string or traceback
+     when trying to get non-existent attributes relative to other
+     typical objects, and did not seem to actually perform better.
 
   3. Due to the above two reasons, ``__dict__`` will always be created
-    and initialized in ``__init__``, so it would not save space.
+     and initialized in ``__init__``, so it would not save space.
 
   4. For what ``compose`` is doing, using ``__slots__`` does not
-    seem to significantly increase execution speed anyway.
+     seem to significantly increase execution speed anyway.
