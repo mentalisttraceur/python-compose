@@ -141,8 +141,8 @@ Design Decisions
     helpful message if ``compose()`` is called with no arguments.
 
 * Using ``functools.recursive_repr`` if available because if recursion
-  happens (unlikely), having a working and recursion-safe ``__repr__``
-  would likely be extremely helpful for debugging and code robustness.
+  happens, having a working and recursion-safe ``__repr__`` would
+  likely be extremely helpful for debugging and code robustness.
 
   Not going beyond that because the code involved would be complex and
   not portable across Python implementations, and the right place to
@@ -161,25 +161,39 @@ Design Decisions
   be a positional argument, but ideally should be passed through
   transparently even if not, to match how normal methods work.
 
-* First optimization priority is to "optimize for optimization":
-  implementing the essential logic of the intended behavior in as
-  clearly and simply as possible, because that helps optimizers.
+* Optimization priorities are:
 
-  Second optimization priority is ``__call__``, because that is the
-  code path which can only be extracted from hot loops or other
-  spots where performance matters by not using this thing at all.
+  1. "Optimize for optimization": implementing the essential logic
+     of the intended behavior in as clearly and simply as possible,
+     because that helps optimizers.
 
-  Third optimization priority is ``__init__``, because composing
-  callables together is also essential to actually using this,
-  and it can usually be pulled out of hot loops, but not always.
+  2. ``__call__``, because that is the code path which can only be
+     extracted from hot loops or other spots where performance
+     matters by not using ``compose`` at all.
 
-  Fourth optimization priority is to not store data redundantly,
-  because memory-constrained algorithms and systems are a thing,
-  and it is much easier to add redundant data on top of an
-  implementation than it is to remove it.
+  3. ``__init__``, because composing callables together is also
+     essential to actually using this, and in some cases cannot
+     be pulled out of performance-sensitive code paths.
 
-* Using read-only tuples and ``@property`` as much
-  as possible for the composed functions because:
+  4. Not storing data redundantly, because memory-constrained
+     systems are a thing, and it is much easier to add redundant
+     data on top of an implementation than it is to remove it.
+
+* Flattening nested instances of ``compose`` because
+
+  * ``__call__`` performance is more important in typical cases
+    that runspace efficiency (see above performance priorities).
+
+  * Intermediate composed functions that are never used
+    after composing them with something else can just
+    be deleted so that they don't take up memory.
+
+  * It is more trivial to prevent the flattening by using a
+    simple wrapper function or class on this implementation
+    than flattening on top of a not-flattening one.
+
+* Using tuples and a read-only ``@property`` for storing
+  and exposing the composed functions because:
 
   * Immutability helps reasoning about and validating code.
 
@@ -190,15 +204,24 @@ Design Decisions
 
   * Mutability is normally not needed for composed functions.
 
-* ``.functions`` is made every time instead of being cached
-  because if someone does bypass the immutability, this way
-  will prevent *accidental* inconsistencies between the two.
+* Generating the ``functions`` attribute tuple every time instead
+  of caching it, because:
 
-  *Intentional* inconsistencies that can only be introduced
-  by deliberately modifying the implementation are fine.
-  What is important is minimizing the surface area for
-  errors and debugging difficutly to be introduced by
-  merely forgetting, not realizing, or cutting corners.
+  * This implementation prevents *accidental* inconsistencies
+    if someone intentionally bypasses the immutability.
+
+    (Intentional inconsistencies that can only be introduced *by
+    deliberately modifying the implementation* are fine. What's
+    important is minimizing the surface area for errors and
+    debugging difficulty being introduced by merely *forgetting*
+    or *not realizing* the need to keep things consistent.)
+
+  * The performance priority of not storing data redundantly as
+    part of composing and calling is usually more important
+    than introspection performance, *especially* because the
+    caching can be implemented much more trivially on top of
+    this implementation than preventing caching would be if it
+    was implemented in ``compose``.
 
 * Storing the first function separately from the rest allows
   ``__call__`` to be more efficient, simpler, and clearer.
@@ -225,7 +248,7 @@ Design Decisions
 
   * ``__wrapped__`` can be implemented with ``__getattr__`` redirecting
     to a slotted ``_wrapped`` along with everything else being slotted,
-    but see above about ``__call__`` and ``__init__`` not being faster.
+    but see above about using slots still not being usefully faster.
 
   * ``__wrapped__`` can be implemented with ``__getattribute__``
     redirecting to a slotted ``_wrapped``, but that ends up
@@ -252,10 +275,3 @@ Design Decisions
 * Not providing descriptor support like ``functools.partialmethod``
   for now, until a need for it becomes apparent which a "normal
   function" variant (see last point) does not satisfy well enough.
-
-* Waiting to provide an ``async``/``await`` variant
-  until it becomes clear what the best way to do it
-  is, and if the best place for it is this package.
-
-* Waiting to provide a C-based implementation until there
-  is some demand or need for the greater optimization.
