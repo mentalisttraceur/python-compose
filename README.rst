@@ -106,9 +106,9 @@ Design Decisions
 * The result of ``compose`` should be a drop-in replacement to
   functions in as many code paths as possible. Therefore:
 
-  * The real signature of the composed function (the signature
-    of the "inner-most" function) is exposed in the standard
-    Python way (by assigning that function in ``__wrapped__``).
+  * The proper signature of the composed function is exposed
+    in the standard Python way (by exposing the "inner-most"
+    function as the attribute ``__wrapped__``).
 
   * Arbitrary attribute assignment (``__dict__``) should work,
     because Python allows people to do that to functions.
@@ -116,35 +116,29 @@ Design Decisions
   * Weak references (``__weakref__``) are supported,
     because Python allows weakly referencing functions.
 
-* Failing fast as much as possible because that is important
+* Failing-fast as much as possible because that is important
   to help debugging by keeping errors local to their causes.
 
-* ``__wrapped__`` cannot be a ``@property`` because several
-  functions in the standard library cannot handle that.
+* Treating ``compose()`` with no arguments as an error, instead
+  of as implicitly composing with an identity function, because:
 
-  As a minor point, "portability conservatism": it is safer
-  to bet on the most conservative feature-set possible.
+  * It avoids turning mistakes into silent misbehavior by default.
 
-* Storing the first function separately from the rest allows
-  ``__call__`` to be written more efficiently, simply, and clearly.
+  * People who want the other behavior can more trivially build
+    it on top of this behavior than the other way around:
 
-* Treating ``compose()`` without any arguments as an error, instead
-  of as producing a no-op passthrough identity function, because:
+    .. code:: python
 
-  1. It avoids turning mistakes into silent misbehavior by default.
+        compose = partial(compose, identity)
 
-  2. It is the more flexible way: people can do
+* Doing ``__init__(self, *functions)`` instead of
+  ``__init__(self, function, *functions)`` because:
 
-     .. code:: python
+  * It makes the signature and docstring more correctly hint that the
+    first function argument is not special or different from the rest.
 
-         compose = partial(compose, identity)
-
-     but going the other way is less trivial.
-
-* Using ``__init__(self, *functions)`` instead of
-  ``__init__(self, function, *functions)`` because manual control is
-  needed to reliably produce a sufficiently helpful and clear error
-  message in the event that ``compose()`` is called with no arguments.
+  * It allows manually raising an error with a clearer and more
+    helpful message if ``compose()`` is called with no arguments.
 
 * Using ``functools.recursive_repr`` if available because if recursion
   happens (unlikely), having a working and recursion-safe ``__repr__``
@@ -162,18 +156,106 @@ Design Decisions
   function composition should still work correctly - in this case,
   silent seemingly-successful unintended misbehavior would be awful.
 
+  If the user uses ``compose`` to implement methods, the ``self``
+  argument to that method going through ``compose`` will normally
+  be a positional argument, but ideally should be passed through
+  transparently even if not, to match how normal methods work.
+
+* First optimization priority is to "optimize for optimization":
+  implementing the essential logic of the intended behavior in as
+  clearly and simply as possible, because that helps optimizers.
+
+  Second optimization priority is ``__call__``, because that is the
+  code path which can only be extracted from hot loops or other
+  spots where performance matters by not using this thing at all.
+
+  Third optimization priority is ``__init__``, because composing
+  callables together is also essential to actually using this,
+  and it can usually be pulled out of hot loops, but not always.
+
+  Fourth optimization priority is to not store data redundantly,
+  because memory-constrained algorithms and systems are a thing,
+  and it is much easier to add redundant data on top of an
+  implementation than it is to remove it.
+
+* Using read-only tuples and ``@property`` as much
+  as possible for the composed functions because:
+
+  * Immutability helps reasoning about and validating code.
+
+  * Immutable types provide more optimisation opportunities
+    that a Python implementation could take advantage of.
+
+  * Discouraging mutations encourages optimizer-friendly code.
+
+  * Mutability is normally not needed for composed functions.
+
+* ``.functions`` is made every time instead of being cached
+  because if someone does bypass the immutability, this way
+  will prevent *accidental* inconsistencies between the two.
+
+  *Intentional* inconsistencies that can only be introduced
+  by deliberately modifying the implementation are fine.
+  What is important is minimizing the surface area for
+  errors and debugging difficutly to be introduced by
+  merely forgetting, not realizing, or cutting corners.
+
+* Storing the first function separately from the rest allows
+  ``__call__`` to be more efficient, simpler, and clearer.
+
+* ``__wrapped__`` cannot be a ``@property`` because several
+  functions in the standard library cannot handle that.
+
+  As a minor point, "portability conservatism": it is safer
+  to bet on the most conservative feature-set possible.
+
 * Not using ``__slots__`` because:
 
-  1. ``__wrapped__`` cannot be in ``__slots__`` because that has
+  * ``__call__`` and ``__init__`` do not actually perform practically
+    better when using ``__slots__`` - other overhead dominates.
+
+  * ``__slots__`` is another subtle portability liability
+    on minimal or older Python implementations.
+
+  * ``__slots__`` forces more code surface area to support
+    older pickle protocols for those who might need that.
+
+  * ``__wrapped__`` cannot be in ``__slots__`` because that has
      the same problem as making it a ``@property`` (see above).
 
-  2. ``__wrapped__`` can be implemented with ``__getattr__``,
-     but this would cause an inconsistent error string or traceback
-     when trying to get non-existent attributes relative to other
-     typical objects, and did not seem to actually perform better.
+  * ``__wrapped__`` can be implemented with ``__getattr__`` redirecting
+    to a slotted ``_wrapped`` along with everything else being slotted,
+    but see above about ``__call__`` and ``__init__`` not being faster.
 
-  3. Due to the above two reasons, ``__dict__`` will always be created
-     and initialized in ``__init__``, so it would not save space.
+  * ``__wrapped__`` can be implemented with ``__getattribute__``
+    redirecting to a slotted ``_wrapped``, but that ends up
+    much slower than just not using ``__slots__`` at all.
 
-  4. For what ``compose`` is doing, using ``__slots__`` does not
-     seem to significantly increase execution speed anyway.
+* Not providing a separate ``rcompose`` (which would compose
+  its arguments in reverse order) for now, because it is
+  trivial to implement on top of ``compose`` if needed:
+
+  .. code:: python
+
+      def rcompose(*functions):
+          return compose(*reversed(functions))
+
+* Not providing a separate "just a normal function" variant for now,
+  because it is trivial to implement on top of ``compose`` if needed:
+
+  .. code:: python
+
+      def fcompose(*functions):
+          composed = compose(*functions)
+          return lambda *args, **kwargs: composed(*args, **kwargs)
+
+* Not providing descriptor support like ``functools.partialmethod``
+  for now, until a need for it becomes apparent which a "normal
+  function" variant (see last point) does not satisfy well enough.
+
+* Waiting to provide an ``async``/``await`` variant
+  until it becomes clear what the best way to do it
+  is, and if the best place for it is this package.
+
+* Waiting to provide a C-based implementation until there
+  is some demand or need for the greater optimization.
