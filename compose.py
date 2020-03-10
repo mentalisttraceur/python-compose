@@ -77,7 +77,7 @@ class compose(object):
 
     @property
     def functions(self):
-        return (self.__wrapped__,) + self._wrappers
+        return (self.__wrapped__,) + tuple(self._wrappers)
 
 
 # Portability to some minimal Python implementations:
