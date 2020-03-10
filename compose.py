@@ -57,7 +57,8 @@ class compose(object):
                 name = _name(self)
                 raise TypeError(repr(name) + ' arguments must be callable')
             if isinstance(function, compose):
-                _functions.extend(function.functions)
+                _functions.append(function.__wrapped__)
+                _functions.extend(function._wrappers)
             else:
                 _functions.append(function)
         self.__wrapped__ = _functions[0]
