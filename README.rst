@@ -204,6 +204,21 @@ Design Decisions
 
   * Mutability is normally not needed for composed functions.
 
+  * ``functools.partial`` also only exposes read-only attributes.
+
+  * Immutability now is forward-compatible with mutability later;
+    changing mutability into immutability is a breaking change.
+
+  * A simple mutable variant can be implemented trivially
+    on top of the current immutable ``compose``:
+
+    .. code:: python
+
+        class compose(compose):
+            def __init__(self, *functions):
+                super(compose, self).__init__(*functions)
+                self._wrappers = list(self._wrappers)
+
 * Generating the ``functions`` attribute tuple every time instead
   of caching it, because:
 
@@ -220,8 +235,23 @@ Design Decisions
     part of composing and calling is usually more important
     than introspection performance, *especially* because the
     caching can be implemented much more trivially on top of
-    this implementation than preventing caching would be if it
-    was implemented in ``compose``.
+    this implementation than preventing caching would be if
+    it was implemented in ``compose``.
+
+  * A caching variant can be implemented on top
+    of the current non-caching ``compose``:
+
+    .. code:: python
+
+        class compose(compose):
+            @property
+            def functions(self):
+                try:
+                    return self._functions
+                except AttributeError:
+                    pass
+                self._functions = super(compose, self).functions
+                return self._functions
 
 * Storing the first function separately from the rest allows
   ``__call__`` to be more efficient, simpler, and clearer.
@@ -232,27 +262,63 @@ Design Decisions
   As a minor point, "portability conservatism": it is safer
   to bet on the most conservative feature-set possible.
 
-* Not using ``__slots__`` because:
+* Not using ``__slots__`` because of many weak reasons adding up:
 
-  * ``__call__`` and ``__init__`` do not actually perform practically
-    better when using ``__slots__`` - other overhead dominates.
+  * ``__call__`` performance is basically the same, at best
+    only marginally better, when using ``__slots__``.
 
-  * ``__slots__`` is another subtle portability liability
-    on minimal or older Python implementations.
+    (``__init__`` sees a better but still small improvement.)
 
-  * ``__slots__`` forces more code surface area to support
-    older pickle protocols for those who might need that.
+  * ``__slots__`` forces more code to support older
+    pickle protocols for those who might need that.
+
+    (But one-liner ``__getstate__`` and ``__setstate__`` that
+    just handle the 3-tuple of ``_wrapped``, ``_wrappers``,
+    and ``__dict__`` would work, and are probably optimal.)
 
   * ``__wrapped__`` cannot be in ``__slots__`` because that has
-     the same problem as making it a ``@property`` (see above).
+    the same problem as making it a ``@property`` (see above).
 
-  * ``__wrapped__`` can be implemented with ``__getattr__`` redirecting
-    to a slotted ``_wrapped`` along with everything else being slotted,
-    but see above about using slots still not being usefully faster.
+  * ``__wrapped__`` can be implemented with ``__getattr__``
+    redirecting to a slotted ``_wrapped``, although once
+    upon a type Transcrypt didn't support ``__getattr__``,
+    which is a great example for portability conservatism.
 
   * ``__wrapped__`` can be implemented with ``__getattribute__``
-    redirecting to a slotted ``_wrapped``, but that ends up
-    much slower than just not using ``__slots__`` at all.
+    redirecting to a slotted ``_wrapped``, but implementing the
+    ``__getattribute__`` function is much slower than just not
+    using ``__slots__`` at all, since it proxies all attribute
+    access.
+
+  * If ``__wrapped__`` is stored in ``__dict__`` and is always
+    set in ``__init__``, a lot of the memory savings from
+    using ``__slots__`` are negated.
+
+* When flattening composed ``compose`` instances in ``__init__``,
+  ``__wrapped__`` and ``_wrapped`` attributes are used instead
+  of the ``functions`` attribute, because:
+
+  * Speed of composition significantly increases, given
+    that ``functions`` is generated every time.
+
+  * The loss of symmetry between this and the public interface
+    of the ``functions`` attribute is unfortunate, because it
+    forces any subclasses to use ``_wrappers`` consistently
+    with ``compose`` instead of just ``functions``, but the
+    advantage seems to be worthwhile.
+
+* The ``functions`` generation uses ``tuple(self._wrappers)``
+  instead of just ``self._wrappers`` to enable subclasses
+  that make ``_wrappers`` something other than a tuple to
+  still work properly.
+
+  A subclass which wants ``functions`` itself to be something
+  other than a tuple would need to provide that themselves,
+  but this should cover at least some cases.
+
+  Importantly, because tuples are immutable, calling ``tuple``
+  on a tuple just returns the same tuple instead of copying in
+  CPython, and other Pythons can do that optimization too.
 
 * Not providing a separate ``rcompose`` (which would compose
   its arguments in reverse order) for now, because it is
