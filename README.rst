@@ -184,6 +184,11 @@ Design Decisions
 
 * Flattening nested instances of ``compose`` because
 
+  * It makes the repr much more helpful for debugging and
+    interactive usage. It is more common to want to know
+    what the actual composed callable does, than to know
+    the tree of nested ``compose`` calls that created it.
+
   * ``__call__`` performance is more important in typical cases
     than runspace efficiency (see above performance priorities).
 
