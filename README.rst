@@ -270,12 +270,18 @@ Design Decisions
   As a minor point, "portability conservatism": it is safer
   to bet on the most conservative feature-set possible.
 
-* Not using ``__slots__`` because of many weak reasons adding up:
+* Not using ``__slots__`` because of many reasons adding up:
 
   * ``__call__`` performance is basically the same, at best
     only marginally better, when using ``__slots__``.
 
     (``__init__`` sees a better but still small improvement.)
+
+    On PyPy, ``__call__`` ends up getting optimized to the
+    same blazingly performant code with or without
+    ``__slots__`` - makes no difference. On CPython, the
+    no-``__slots__`` variant actually performs better once
+    ``__wrapped__`` is supported (see below).
 
   * ``__slots__`` forces more code to support older
     pickle protocols for those who might need that.
@@ -287,20 +293,30 @@ Design Decisions
   * ``__wrapped__`` cannot be in ``__slots__`` because that has
     the same problem as making it a ``@property`` (see above).
 
-  * ``__wrapped__`` can be implemented with ``__getattr__``
-    redirecting to a slotted ``_wrapped``, although once
-    upon a type Transcrypt didn't support ``__getattr__``,
-    which is a great example for portability conservatism.
-
   * ``__wrapped__`` can be implemented with ``__getattribute__``
     redirecting to a slotted ``_wrapped``, but implementing the
     ``__getattribute__`` function is much slower than just not
     using ``__slots__`` at all, since it proxies all attribute
     access.
 
+  * ``__wrapped__`` can be implemented with ``__getattr__``
+    redirecting to a slotted ``_wrapped``, although once
+    upon a type Transcrypt didn't support ``__getattr__``,
+    which is a great example for portability conservatism.
+
+    Moreover, testing shows that adding ``__getattr__`` to
+    a class still makes the whole slotted implementation
+    slower somehow (merely removing ``__getattr__`` from
+    the class definition makes tests which never use
+    ``__getattr__`` go faster, although there is no
+    reason at the level of Python semantics for why this
+    should be the case). Once PyPy warms up, this is
+    negligible, and on CPython it is relatively minor,
+    but it is still strictly worse on most systems tested.
+
   * If ``__wrapped__`` is stored in ``__dict__`` and is always
     set in ``__init__``, a lot of the memory savings from
-    using ``__slots__`` are negated.
+    using ``__slots__`` are negated too.
 
 * When flattening composed ``compose`` instances in ``__init__``,
   ``__wrapped__`` and ``_wrapped`` attributes are used instead
