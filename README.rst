@@ -185,7 +185,7 @@ Design Decisions
 * Flattening nested instances of ``compose`` because
 
   * ``__call__`` performance is more important in typical cases
-    that runspace efficiency (see above performance priorities).
+    than runspace efficiency (see above performance priorities).
 
   * Intermediate composed functions that are never used
     after composing them with something else can just
