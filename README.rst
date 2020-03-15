@@ -148,8 +148,8 @@ Design Decisions
   not portable across Python implementations, and the right place to
   solve that is a separate polyfil if at all possible.
 
-* Manually getting ``self`` from ``*args`` in ``__call__``
-  portably makes ``self`` a positional-only argument.
+* ``self`` has to be a positional-only argument of ``__call__``
+  to make ``__call__`` properly transparent in all cases.
 
   If the user makes a typo, ``**``-splats arguments, or otherwise
   ends up passing ``self`` in ``kwargs``, maybe even intentionally,
@@ -160,6 +160,9 @@ Design Decisions
   argument to that method going through ``compose`` will normally
   be a positional argument, but ideally should be passed through
   transparently even if not, to match how normal methods work.
+
+* Manually getting ``self`` from ``*args`` in ``__call__``
+  **portably** makes ``self`` a positional-only argument.
 
 * Optimization priorities are:
 
