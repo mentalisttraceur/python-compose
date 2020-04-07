@@ -314,6 +314,10 @@ Design Decisions
     negligible, and on CPython it is relatively minor,
     but it is still strictly worse on most systems tested.
 
+  * ``__wrapped__`` can be just a *copy* of a slotted attribute,
+    but the same reasons apply against this as against making
+    ``functions`` a cached copy.
+
   * If ``__wrapped__`` is stored in ``__dict__`` and is always
     set in ``__init__``, a lot of the memory savings from
     using ``__slots__`` are negated too.
