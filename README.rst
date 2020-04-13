@@ -369,3 +369,23 @@ Design Decisions
 * Not providing descriptor support like ``functools.partialmethod``
   for now, until a need for it becomes apparent which a "normal
   function" variant (see last point) does not satisfy well enough.
+
+* Not providing an ``async``/``await`` variant for now, because
+  it is not yet clear if it is useful enough or if the best
+  place for it is this package, and in the meantime it can be
+  implemented on top of ``compose`` if needed:
+
+  .. code:: python
+
+      import inspect
+
+      class acompose(compose):
+          async def __call__(self, /, *args, **kwargs):
+              result = self.__wrapped__(*args, **kwargs)
+              if inspect.isawaitable(result):
+                  result = await result
+              for function in self._wrappers:
+                  result = function(result)
+                  if inspect.isawaitable(result):
+                      result = await result
+              return result
