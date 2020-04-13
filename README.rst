@@ -225,7 +225,7 @@ Design Decisions
 
         class compose(compose):
             def __init__(self, *functions):
-                super(compose, self).__init__(*functions)
+                super().__init__(*functions)
                 self._wrappers = list(self._wrappers)
 
 * Generating the ``functions`` attribute tuple every time instead
@@ -252,15 +252,13 @@ Design Decisions
 
     .. code:: python
 
+        import functools
+
         class compose(compose):
             @property
+            @functools.lru_cache(maxsize=1)
             def functions(self):
-                try:
-                    return self._functions
-                except AttributeError:
-                    pass
-                self._functions = super(compose, self).functions
-                return self._functions
+                return super().functions
 
 * Storing the first function separately from the rest allows
   ``__call__`` to be more efficient, simpler, and clearer.
