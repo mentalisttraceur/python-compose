@@ -246,8 +246,8 @@ Design Decisions
     this implementation than preventing caching would be if
     it was implemented in ``compose``.
 
-  * A caching variant can be implemented on top
-    of the current non-caching ``compose``:
+  * A caching variant can be implemented fairly easily
+    on top of the current non-caching ``compose``:
 
     .. code:: python
 
