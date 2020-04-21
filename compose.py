@@ -15,6 +15,7 @@
 
 try:
     from functools import recursive_repr as _recursive_repr
+    # pylint: disable=invalid-name
     _recursive_repr_if_available = _recursive_repr()
 except ImportError:
     def _recursive_repr_if_available(function):
@@ -22,7 +23,7 @@ except ImportError:
 
 
 __all__ = ('compose',)
-__version__ = '1.1.0'
+__version__ = '1.1.1'
 
 
 def _name(obj):
@@ -30,6 +31,8 @@ def _name(obj):
 
 
 class compose(object):
+    # pylint: disable=invalid-name
+    # pylint: disable=bad-option-value,useless-object-inheritance
     """Function composition: compose(f, g)(...) is equivalent to f(g(...)))
 
     Arguments:
@@ -65,6 +68,8 @@ class compose(object):
         self._wrappers = tuple(_functions[1:])
 
     def __call__(*args, **kwargs):
+        # pylint: disable=no-method-argument
+        """Calls the composed function."""
         self, args = args[0], args[1:]
         result = self.__wrapped__(*args, **kwargs)
         for function in self._wrappers:
@@ -78,6 +83,7 @@ class compose(object):
 
     @property
     def functions(self):
+        """Read-only tuple of the composed callables, in order of execution."""
         return (self.__wrapped__,) + tuple(self._wrappers)
 
 
