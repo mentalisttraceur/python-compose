@@ -25,9 +25,6 @@ Versioning
 This library's version numbers follow the `SemVer 2.0.0 specification
 <https://semver.org/spec/v2.0.0.html>`_.
 
-The current version number is available in the variable ``__version__``,
-as is normal for Python modules.
-
 
 Installation
 ------------
