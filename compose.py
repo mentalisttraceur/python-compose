@@ -32,25 +32,21 @@ def _name(obj):
 
 class compose(object):  # pylint: disable=invalid-name
     # pylint: disable=bad-option-value,useless-object-inheritance
-    """Function composition: compose(f, g)(...) is equivalent to f(g(...)).
-
-    Arguments:
-        *functions: Functions (or other callables) to compose.
-            Functions that are instances of `compose` are expanded
-            into their composed functions instead of being nested.
-
-    Attributes:
-        functions: Read-only tuple of the composed functions (in the
-            order they will be executed, not in the order passed in).
-
-    Raises:
-        TypeError:
-            If no arguments are given.
-            If any argument is not callable.
-    """
+    """Function composition: compose(f, g)(...) is equivalent to f(g(...))."""
 
     def __init__(self, *functions):
-        """Initialize the composed function."""
+        """Initialize the composed function.
+
+        Arguments:
+            *functions: Functions (or other callables) to compose.
+                Functions that are instances of `compose` are expanded
+                into their composed functions instead of being nested.
+
+        Raises:
+            TypeError:
+                If no arguments are given.
+                If any argument is not callable.
+        """
         if not functions:
             name = _name(self)
             raise TypeError(repr(name) + ' needs at least one argument')
