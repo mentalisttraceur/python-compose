@@ -32,7 +32,7 @@ def _name(obj):
 
 class compose(object):  # pylint: disable=invalid-name
     # pylint: disable=bad-option-value,useless-object-inheritance
-    """Function composition: compose(f, g)(...) is equivalent to f(g(...))
+    """Function composition: compose(f, g)(...) is equivalent to f(g(...)).
 
     Arguments:
         *functions: Functions (or other callables) to compose.
