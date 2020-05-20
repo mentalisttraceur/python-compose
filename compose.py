@@ -67,7 +67,7 @@ class compose(object):  # pylint: disable=invalid-name
         self._wrappers = tuple(_functions[1:])
 
     def __call__(*args, **kwargs):  # pylint: disable=no-method-argument
-        """Calls the composed function."""
+        """Call the composed function."""
         self, args = args[0], args[1:]
         result = self.__wrapped__(*args, **kwargs)
         for function in self._wrappers:
