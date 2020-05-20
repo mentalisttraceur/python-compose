@@ -50,6 +50,7 @@ class compose(object):  # pylint: disable=invalid-name
     """
 
     def __init__(self, *functions):
+        """Initialize the composed function."""
         if not functions:
             name = _name(self)
             raise TypeError(repr(name) + ' needs at least one argument')
