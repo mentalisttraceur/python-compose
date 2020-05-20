@@ -23,7 +23,7 @@ setup(
     version=__version__,
     description=__doc__.split('\n')[0],
     long_description=long_description,
-    license='0BSD (BSD Zero Clause License)',
+    license='0BSD',
     url='https://github.com/mentalisttraceur/python-compose',
     author='Alexander Kozhevnikov',
     author_email='mentalisttraceur@gmail.com',
