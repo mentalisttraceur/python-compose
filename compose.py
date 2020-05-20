@@ -14,7 +14,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 try:
-    from functools import recursive_repr as _recursive_repr
+    from reprlib import recursive_repr as _recursive_repr
     # pylint: disable=invalid-name
     _recursive_repr_if_available = _recursive_repr()
 except ImportError:
@@ -23,7 +23,7 @@ except ImportError:
 
 
 __all__ = ('compose',)
-__version__ = '1.1.1'
+__version__ = '1.1.2'
 
 
 def _name(obj):
