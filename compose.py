@@ -77,6 +77,7 @@ class compose(object):  # pylint: disable=invalid-name
 
     @_recursive_repr_if_available
     def __repr__(self):
+        """Represent the composed function as an unambiguous string."""
         arguments = ', '.join(map(repr, reversed(self.functions)))
         return _name(self) + '(' + arguments + ')'
 
