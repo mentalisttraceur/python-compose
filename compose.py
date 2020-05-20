@@ -30,8 +30,7 @@ def _name(obj):
     return type(obj).__name__
 
 
-class compose(object):
-    # pylint: disable=invalid-name
+class compose(object):  # pylint: disable=invalid-name
     # pylint: disable=bad-option-value,useless-object-inheritance
     """Function composition: compose(f, g)(...) is equivalent to f(g(...)))
 
@@ -67,8 +66,7 @@ class compose(object):
         self.__wrapped__ = _functions[0]
         self._wrappers = tuple(_functions[1:])
 
-    def __call__(*args, **kwargs):
-        # pylint: disable=no-method-argument
+    def __call__(*args, **kwargs):  # pylint: disable=no-method-argument
         """Calls the composed function."""
         self, args = args[0], args[1:]
         result = self.__wrapped__(*args, **kwargs)
