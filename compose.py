@@ -36,8 +36,8 @@ class compose(object):  # pylint: disable=invalid-name
 
     Arguments:
         *functions: Functions (or other callables) to compose.
-            Other instances of `compose` in the arguments are expanded
-            into their composed functions instead of nesting.
+            Functions that are instances of `compose` are expanded
+            into their composed functions instead of being nested.
 
     Attributes:
         functions: Read-only tuple of the composed functions (in the
