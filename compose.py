@@ -64,6 +64,8 @@ class compose(object):  # pylint: disable=invalid-name
 
     def __call__(*args, **kwargs):  # pylint: disable=no-method-argument
         """Call the composed function."""
+        if not args:
+            raise TypeError("__call__() missing 1 positional argument: 'self'")
         self, args = args[0], args[1:]
         result = self.__wrapped__(*args, **kwargs)
         for function in self._wrappers:
