@@ -18,6 +18,9 @@ and returns callable ``compose`` objects which:
 This ``compose`` also fails fast with a ``TypeError`` if any
 argument is not callable, or when called with no arguments.
 
+This module also provides an ``acompose`` which can
+compose both regular and ``async`` functions.
+
 
 Versioning
 ----------
@@ -97,6 +100,13 @@ can check if we are looking at a ``compose`` instance:
     >>> isinstance(g_of_f, compose)
     True
 
+We can do all of the above with ``async`` functions
+mixed in by using ``acompose`` instead of ``compose``:
+
+.. code:: python
+
+    from compose import acompose
+
 
 Recipes
 -------
@@ -137,20 +147,3 @@ Recipes
       def fcompose(*functions):
           composed = compose(*functions)
           return lambda *args, **kwargs: composed(*args, **kwargs)
-
-* ``async``/``await`` support:
-
-  .. code:: python
-
-      import inspect
-
-      class acompose(compose):
-          async def __call__(self, /, *args, **kwargs):
-              result = self.__wrapped__(*args, **kwargs)
-              if inspect.isawaitable(result):
-                  result = await result
-              for function in self._wrappers:
-                  result = function(result)
-                  if inspect.isawaitable(result):
-                      result = await result
-              return result
