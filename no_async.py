@@ -86,30 +86,8 @@ class compose(object):  # pylint: disable=invalid-name
         return (self.__wrapped__,) + tuple(self._wrappers)
 
 
-class acompose(compose):  # pylint: disable=invalid-name
-    """Asynchronous function composition.
-
-    This variant supports both regular and ``async`` functions.
-    The composed function is always ``async``, even if none of
-    the functions being composed are ``async``.
-    """
-
-    async def __call__(*args, **kwargs):  # pylint: disable=no-method-argument
-        """Call the composed function."""
-        self, args = args[0], args[1:]
-        result = self.__wrapped__(*args, **kwargs)
-        if _isawaitable(result):
-            result = await result
-        for function in self._wrappers:
-            result = function(result)
-            if _isawaitable(result):
-                result = await result
-        return result
-
-
 # Portability to some minimal Python implementations:
 try:
     compose.__name__
 except AttributeError:
     compose.__name__ = 'compose'
-    acompose.__name__ = 'acompose'
