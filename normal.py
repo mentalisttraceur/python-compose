@@ -64,11 +64,8 @@ class compose(object):  # pylint: disable=invalid-name
         self.__wrapped__ = _functions[0]
         self._wrappers = tuple(_functions[1:])
 
-    def __call__(*args, **kwargs):  # pylint: disable=no-method-argument
+    def __call__(self, /, *args, **kwargs):
         """Call the composed function."""
-        if not args:
-            raise TypeError("__call__() missing 1 positional argument: 'self'")
-        self, args = args[0], args[1:]
         result = self.__wrapped__(*args, **kwargs)
         for function in self._wrappers:
             result = function(result)
@@ -94,11 +91,8 @@ class acompose(compose):  # pylint: disable=invalid-name
     even if none of the functions being composed are ``async``.
     """
 
-    async def __call__(*args, **kwargs):  # pylint: disable=no-method-argument
+    async def __call__(self, /, *args, **kwargs):
         """Call the composed function."""
-        if not args:
-            raise TypeError("__call__() missing 1 positional argument: 'self'")
-        self, args = args[0], args[1:]
         result = self.__wrapped__(*args, **kwargs)
         if _isawaitable(result):
             result = await result
