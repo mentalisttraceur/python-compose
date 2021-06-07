@@ -17,7 +17,6 @@ from inspect import isawaitable as _isawaitable
 
 try:
     from reprlib import recursive_repr as _recursive_repr
-    # pylint: disable=invalid-name
     _recursive_repr_if_available = _recursive_repr()
 except ImportError:
     def _recursive_repr_if_available(function):
@@ -32,8 +31,7 @@ def _name(obj):
     return type(obj).__name__
 
 
-class compose(object):  # pylint: disable=invalid-name
-    # pylint: disable=bad-option-value,useless-object-inheritance
+class compose(object):
     """Function composition: compose(f, g)(...) is equivalent to f(g(...))."""
 
     def __init__(self, *functions):
@@ -83,7 +81,7 @@ class compose(object):  # pylint: disable=invalid-name
         return (self.__wrapped__,) + tuple(self._wrappers)
 
 
-class acompose(compose):  # pylint: disable=invalid-name
+class acompose(compose):
     """Asynchronous function composition.
 
     This variant supports both regular and ``async`` functions.
