@@ -96,3 +96,61 @@ can check if we are looking at a ``compose`` instance:
 
     >>> isinstance(g_of_f, compose)
     True
+
+
+Recipes
+-------
+
+* If you want composing zero functions to be the identity function:
+
+  .. code:: python
+
+      def identity(x):
+          return x
+
+      icompose = partial(compose, identity)
+
+* If you want the ``functions`` attribute to be cached:
+
+  .. code:: python
+
+      import functools
+
+      class ccompose(compose):
+          @functools.cache_property
+          def functions(self):
+              return super().functions
+
+* Compose arguments in opposite order (useful with things like
+  ``functools.partial``, or just more intuitive in some cases):
+
+  .. code:: python
+
+      def rcompose(*functions):
+          return compose(*reversed(functions))
+
+* When you need a regular function instead of a callable class instance
+  (for example, when you want to define a method using ``compose``):
+
+  .. code:: python
+
+      def fcompose(*functions):
+          composed = compose(*functions)
+          return lambda *args, **kwargs: composed(*args, **kwargs)
+
+* ``async``/``await`` support:
+
+  .. code:: python
+
+      import inspect
+
+      class acompose(compose):
+          async def __call__(self, /, *args, **kwargs):
+              result = self.__wrapped__(*args, **kwargs)
+              if inspect.isawaitable(result):
+                  result = await result
+              for function in self._wrappers:
+                  result = function(result)
+                  if inspect.isawaitable(result):
+                      result = await result
+              return result
