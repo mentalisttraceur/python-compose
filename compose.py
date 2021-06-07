@@ -39,8 +39,7 @@ class compose(object):  # pylint: disable=invalid-name
 
         Arguments:
             *functions: Functions (or other callables) to compose.
-                Functions that are instances of `compose` are expanded
-                into their composed functions instead of being nested.
+                Instances of ``compose`` are flattened, not nested.
 
         Raises:
             TypeError:
