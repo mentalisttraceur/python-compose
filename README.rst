@@ -22,8 +22,8 @@ argument is not callable, or when called with no arguments.
 Versioning
 ----------
 
-This library's version numbers follow the `SemVer 2.0.0 specification
-<https://semver.org/spec/v2.0.0.html>`_.
+This library's version numbers follow the `SemVer 2.0.0
+specification <https://semver.org/spec/v2.0.0.html>`_.
 
 
 Installation
