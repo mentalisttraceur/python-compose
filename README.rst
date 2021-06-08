@@ -120,17 +120,6 @@ Recipes
 
       icompose = partial(compose, identity)
 
-* If you want the ``functions`` attribute to be cached:
-
-  .. code:: python
-
-      import functools
-
-      class ccompose(compose):
-          @functools.cache_property
-          def functions(self):
-              return super().functions
-
 * Compose arguments in opposite order (useful with things like
   ``functools.partial``, or just more intuitive in some cases):
 
