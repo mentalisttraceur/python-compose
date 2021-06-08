@@ -120,8 +120,7 @@ Recipes
 
       icompose = partial(compose, identity)
 
-* Compose arguments in opposite order (useful with things like
-  ``functools.partial``, or just more intuitive in some cases):
+* If you want or need to compose arguments in reverse order:
 
   .. code:: python
 
