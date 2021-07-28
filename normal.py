@@ -59,6 +59,15 @@ class compose(object):
             result = function(result)
         return result
 
+    def __add__(self, other):
+        """Compose using '+' operator."""
+        if isinstance(other, compose):
+            return compose(*self._functions, other._functions)
+        elif callable(other):
+            return compose(*self._functions, other)
+        else:
+            raise ValueError("Can only compose callables and 'compose' instances.")
+
     @_recursive_repr_if_available
     def __repr__(self):
         """Represent the composed function as an unambiguous string."""
