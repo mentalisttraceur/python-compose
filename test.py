@@ -11,6 +11,46 @@ def test_compose():
     assert f_g.functions == (g, f)  # functions exposed in execution order
 
 
+def test_compose_add_compose():
+    def f(s):
+        return s + 'f'
+    def g(s):
+        return s + 'g'
+    f_wrapped = compose(f)
+    g_wrapped = compose(g)
+    f_g_wrapped = f_wrapped + g_wrapped
+
+    assert f_g_wrapped('') == 'gf'  # Remember that it's f(g(...)) so g runs first
+    assert f_g_wrapped.functions == (g, f)  # functions exposed in execution order
+
+
+def test_compose_add_function():
+    def f(s):
+        return s + 'f'
+    def g(s):
+        return s + 'g'
+    f_wrapped = compose(f)
+    f_g_composed = f_wrapped + g
+    assert f_g_composed('') == 'gf'  # Remember that it's f(g(...)) so g runs first
+    assert f_g_composed.functions == (g, f)  # functions exposed in execution order
+
+
+def test_compose_add_neither_compose_nor_function():
+    def f(s):
+        return s + 'f'
+    f_wrapped = compose(f)
+    g = 'string'
+    
+    raised = False
+
+    try:
+        f_g_wrapped = f_wrapped + g
+    except ValueError as err:
+        raised = True
+    finally:
+        assert raised
+    
+
 def test_inlining():
     def f(_):
         return None

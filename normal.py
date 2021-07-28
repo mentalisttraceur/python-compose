@@ -62,9 +62,9 @@ class compose(object):
     def __add__(self, other):
         """Compose using '+' operator."""
         if isinstance(other, compose):
-            return compose(*self._functions, other._functions)
+            return compose(*self.functions, *other.functions)
         elif callable(other):
-            return compose(*self._functions, other)
+            return compose(*self.functions, other)
         else:
             raise ValueError("Can only compose callables and 'compose' instances.")
 
