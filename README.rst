@@ -120,15 +120,15 @@ Recipes
 
       icompose = partial(compose, identity)
 
-* If you want or need to compose arguments in reverse order:
+* To compose arguments in reverse order:
 
   .. code:: python
 
       def rcompose(*functions):
           return compose(*reversed(functions))
 
-* When you need a regular function instead of a callable class instance
-  (for example, when you want to define a method using ``compose``):
+* When you need a regular function instead of a callable class
+  instance (for example, to use ``compose`` as a method):
 
   .. code:: python
 
