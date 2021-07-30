@@ -13,7 +13,7 @@ except ImportError:
         return function
 
 
-__all__ = ('compose', 'acompose')
+__all__ = ('compose',)
 __version__ = '1.2.0'
 
 
