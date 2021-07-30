@@ -74,13 +74,16 @@ class compose:
         return (self.__wrapped__,) + tuple(self._wrappers)
 
 
-class acompose(compose):
+class acompose:
     """Asynchronous function composition.
 
     This variant supports both regular and ``async`` functions.
     The composed function must always be called with ``await``,
     even if none of the functions being composed are ``async``.
     """
+    __init__ = compose.__init__
+    __repr__ = compose.__repr__
+    functions = compose.functions
 
     async def __call__(*args, **kwargs):
         """Call the composed function."""
