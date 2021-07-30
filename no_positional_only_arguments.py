@@ -14,7 +14,7 @@ except ImportError:
 
 
 __all__ = ('compose', 'acompose')
-__version__ = '1.2.1'
+__version__ = '1.2.2'
 
 
 def _name(obj):
@@ -44,7 +44,7 @@ class compose:
             if not callable(function):
                 name = _name(self)
                 raise TypeError(repr(name) + ' arguments must be callable')
-            if isinstance(function, compose):
+            if isinstance(function, (compose, acompose)):
                 _functions.append(function.__wrapped__)
                 _functions.extend(function._wrappers)
             else:
