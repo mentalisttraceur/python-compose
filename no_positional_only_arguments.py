@@ -21,7 +21,7 @@ def _name(obj):
     return type(obj).__name__
 
 
-class compose(object):
+class compose:
     """Function composition: compose(f, g)(...) is equivalent to f(g(...))."""
 
     def __init__(self, *functions):
