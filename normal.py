@@ -74,9 +74,13 @@ class compose:
 class acompose:
     """Asynchronous function composition.
 
-    This variant supports both regular and ``async`` functions.
-    The composed function must always be called with ``await``,
-    even if none of the functions being composed are ``async``.
+    Depending on whether or not f and g are awaitable,
+    await acompose(f, g)(...) is equivalent to one of:
+
+        f(g(...))
+        await f(g(...))
+        f(await g(...))
+        await f(await g(...))
     """
     __init__ = compose.__init__
     __repr__ = compose.__repr__
