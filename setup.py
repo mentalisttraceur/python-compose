@@ -69,5 +69,5 @@ setup(
         'Programming Language :: Python :: 2',
         'Operating System :: OS Independent',
     ],
-    py_modules=['compose'],
+    py_modules=modules,
 )
