@@ -14,7 +14,7 @@ except ImportError:
 
 
 __all__ = ('compose', 'acompose')
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
 
 def _name(obj):

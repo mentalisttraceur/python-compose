@@ -3,8 +3,6 @@
 
 """The classic ``compose``, with all the Pythonic features."""
 
-from inspect import isawaitable as _isawaitable
-
 try:
     from reprlib import recursive_repr as _recursive_repr
     _recursive_repr_if_available = _recursive_repr()
@@ -14,7 +12,7 @@ except ImportError:
 
 
 __all__ = ('compose',)
-__version__ = '1.2.2'
+__version__ = '1.2.3'
 
 
 def _name(obj):
