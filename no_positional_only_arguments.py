@@ -14,7 +14,7 @@ except ImportError:
 
 
 __all__ = ('compose', 'acompose')
-__version__ = '1.2.4'
+__version__ = '1.2.5'
 
 
 def _name(obj):
@@ -88,7 +88,7 @@ class acompose:
     """
 
     def __init__(self, *functions):
-        """Initialize the asynchronous composed function.
+        """Initialize the composed function.
 
         Arguments:
             *functions: Functions (or other callables) to compose.
