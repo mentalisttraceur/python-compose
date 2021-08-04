@@ -14,7 +14,7 @@ except ImportError:
 
 
 __all__ = ('compose', 'acompose')
-__version__ = '1.2.3'
+__version__ = '1.2.4'
 
 
 def _name(obj):
@@ -44,7 +44,7 @@ class compose:
             if not callable(function):
                 name = _name(self)
                 raise TypeError(repr(name) + ' arguments must be callable')
-            if isinstance(function, (compose, acompose)):
+            if isinstance(function, compose):
                 _functions.append(function.__wrapped__)
                 _functions.extend(function._wrappers)
             else:
@@ -83,9 +83,34 @@ class acompose:
 
     based on whether f and g return awaitable values.
     """
-    __init__ = compose.__init__
-    __repr__ = compose.__repr__
-    functions = compose.functions
+
+    def __init__(self, *functions):
+        """Initialize the asynchronous composed function.
+
+        Arguments:
+            *functions: Functions (or other callables) to compose.
+                Instances of ``acompose`` are flattened, not nested.
+
+        Raises:
+            TypeError:
+                If no arguments are given.
+                If any argument is not callable.
+        """
+        if not functions:
+            name = _name(self)
+            raise TypeError(repr(name) + ' needs at least one argument')
+        _functions = []
+        for function in reversed(functions):
+            if not callable(function):
+                name = _name(self)
+                raise TypeError(repr(name) + ' arguments must be callable')
+            if isinstance(function, acompose):
+                _functions.append(function.__wrapped__)
+                _functions.extend(function._wrappers)
+            else:
+                _functions.append(function)
+        self.__wrapped__ = _functions[0]
+        self._wrappers = tuple(_functions[1:])
 
     async def __call__(self, /, *args, **kwargs):
         """Call the composed function."""
@@ -97,6 +122,9 @@ class acompose:
             if _isawaitable(result):
                 result = await result
         return result
+
+    __repr__ = compose.__repr__
+    functions = compose.functions
 
 
 # Portability to some minimal Python implementations:
