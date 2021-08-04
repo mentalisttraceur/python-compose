@@ -74,13 +74,14 @@ class compose:
 class acompose:
     """Asynchronous function composition.
 
-    Depending on whether or not f and g are awaitable,
-    await acompose(f, g)(...) is equivalent to one of:
+    await acompose(f, g)(...) is equivalent to one of
 
         f(g(...))
         await f(g(...))
         f(await g(...))
         await f(await g(...))
+
+    based on whether f and g return awaitable values.
     """
     __init__ = compose.__init__
     __repr__ = compose.__repr__
