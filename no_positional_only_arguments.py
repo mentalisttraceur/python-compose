@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose')
-__version__ = '1.2.6'
+__version__ = '1.2.7'
 
 
 from inspect import isawaitable as _isawaitable
@@ -48,9 +48,9 @@ class compose:
 
     def __call__(*args, **kwargs):
         """Call the composed function."""
-        if not args:
-            raise TypeError("__call__() missing 1 positional argument: 'self'")
-        self, args = args[0], args[1:]
+        def __call__(self, *args):
+            return self, args
+        self, args = __call__(*args)
         result = self.__wrapped__(*args, **kwargs)
         for function in self._wrappers:
             result = function(result)
@@ -111,9 +111,9 @@ class acompose:
 
     async def __call__(*args, **kwargs):
         """Call the composed function."""
-        if not args:
-            raise TypeError("__call__() missing 1 positional argument: 'self'")
-        self, args = args[0], args[1:]
+        def __call__(self, *args):
+            return self, args
+        self, args = __call__(*args)
         result = self.__wrapped__(*args, **kwargs)
         if _isawaitable(result):
             result = await result
