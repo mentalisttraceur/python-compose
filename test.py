@@ -82,3 +82,25 @@ def test_repr_eval():
     c1 = compose(c, c, c)
     c2 = eval(repr(c1))
     assert repr(c1) == repr(c2), 'repr eval failed on compose(c, c, c)'
+
+
+def test_positional_only_self_in_call():
+    value = 'whatever'
+    d = compose(dict)(self=value)
+    assert d['self'] == value
+
+    # Now check that making the above work didn't break standard errors:
+
+    raised = False
+    try:
+        compose.__call__()
+    except TypeError:
+        raised = True
+    assert raised, 'compose.__call__() should have raised'
+
+    raised = False
+    try:
+        compose.__call__(self=None)
+    except TypeError:
+        raised = True
+    assert raised, 'compose.__call__(self=...) should have raised'
