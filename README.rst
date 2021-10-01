@@ -127,8 +127,7 @@ Recipes
       def rcompose(*functions):
           return compose(*reversed(functions))
 
-* When you need a regular function instead of a callable class
-  instance (for example, to use ``compose`` as a method):
+* When you need composition to return a regular Python function:
 
   .. code:: python
 
