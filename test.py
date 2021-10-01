@@ -82,12 +82,3 @@ def test_repr_eval():
     c1 = compose(c, c, c)
     c2 = eval(repr(c1))
     assert repr(c1) == repr(c2), 'repr eval failed on compose(c, c, c)'
-
-
-if __name__ == '__main__':
-    test_compose()
-    test_inlining()
-    test_reject_empty()
-    test_reject_non_callable()
-    test_pickle()
-    test_repr_eval()
