@@ -9,12 +9,7 @@ __version__ = '1.2.6'
 
 from inspect import isawaitable as _isawaitable
 
-try:
-    from reprlib import recursive_repr as _recursive_repr
-    _recursive_repr_if_available = _recursive_repr()
-except ImportError:
-    def _recursive_repr_if_available(function):
-        return function
+from reprlib import recursive_repr as _recursive_repr
 
 
 def _name(obj):
@@ -62,7 +57,7 @@ class compose:
             result = function(result)
         return result
 
-    @_recursive_repr_if_available
+    @_recursive_repr()
     def __repr__(self):
         """Represent the composed function as an unambiguous string."""
         arguments = ', '.join(map(repr, reversed(self.functions)))
