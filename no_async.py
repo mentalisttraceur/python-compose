@@ -3,16 +3,16 @@
 
 """The classic ``compose``, with all the Pythonic features."""
 
+__all__ = ('compose',)
+__version__ = '1.2.6'
+
+
 try:
     from reprlib import recursive_repr as _recursive_repr
     _recursive_repr_if_available = _recursive_repr()
 except ImportError:
     def _recursive_repr_if_available(function):
         return function
-
-
-__all__ = ('compose',)
-__version__ = '1.2.6'
 
 
 def _name(obj):

@@ -3,6 +3,10 @@
 
 """The classic ``compose``, with all the Pythonic features."""
 
+__all__ = ('compose', 'acompose')
+__version__ = '1.2.6'
+
+
 from inspect import isawaitable as _isawaitable
 
 try:
@@ -11,10 +15,6 @@ try:
 except ImportError:
     def _recursive_repr_if_available(function):
         return function
-
-
-__all__ = ('compose', 'acompose')
-__version__ = '1.2.6'
 
 
 def _name(obj):
