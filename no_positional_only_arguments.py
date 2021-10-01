@@ -8,7 +8,6 @@ __version__ = '1.2.6'
 
 
 from inspect import isawaitable as _isawaitable
-
 from reprlib import recursive_repr as _recursive_repr
 
 
