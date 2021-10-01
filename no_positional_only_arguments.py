@@ -57,7 +57,7 @@ class compose:
             result = function(result)
         return result
 
-    @_recursive_repr()
+    @_recursive_repr('<...>')
     def __repr__(self):
         """Represent the composed function as an unambiguous string."""
         arguments = ', '.join(map(repr, reversed(self.functions)))
