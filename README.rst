@@ -18,8 +18,8 @@ and returns callable ``compose`` objects which:
 This ``compose`` also fails fast with a ``TypeError`` if any
 argument is not callable, or when called with no arguments.
 
-This module also provides an ``acompose`` which can
-compose both regular and ``async`` functions.
+An ``acompose`` variant is provided which can compose both
+regular and ``async`` functions into an ``async`` function.
 
 
 Versioning
