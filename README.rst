@@ -18,8 +18,8 @@ and returns callable ``compose`` objects which:
 This ``compose`` also fails fast with a ``TypeError`` if any
 argument is not callable, or when called with no arguments.
 
-An ``acompose`` variant is provided which can compose both
-regular and ``async`` functions into an ``async`` function.
+This ``compose`` even provides an ``acompose`` variant
+which does the right thing with ``async`` code.
 
 
 Versioning
@@ -68,7 +68,7 @@ Of course any number of functions can be composed:
     ...     return x * 2
     ...
     >>> times_eight = compose(douple, double, double)
-    >>> times_16 = compose(douple, double, double, double)
+    >>> times_16 = compose(double, double, double, double)
 
 We still get the correct signature introspection:
 
@@ -100,12 +100,45 @@ can check if we are looking at a ``compose`` instance:
     >>> isinstance(g_of_f, compose)
     True
 
-We can do all of the above with ``async`` functions
-mixed in by using ``acompose`` instead of ``compose``:
+We can compose ``async`` code by using ``acompose``:
 
 .. code:: python
 
-    from compose import acompose
+    >>> import asyncio
+    >>> from compose import acompose
+    >>>
+    >>> async def get_data():
+    ...     await asyncio.sleep(0)
+    ...     return 42
+    ...
+    >>> get_and_double_data = acompose(double, get_data)
+    >>> asyncio.run(get_and_double_data())
+    84
+
+Of course we can compose any number of ``async``
+and regular functions, in any order:
+
+.. code:: python
+
+    >>> async def async_double(x):
+    ...     await asyncio.sleep(0)
+    ...     return x * 2
+    ...
+    >>> async_times_16 = acompose(async_double, double, async_double, double)
+    >>> asyncio.run(async_times_16(1))
+    16
+
+``compose`` and ``acompose`` instances are distinct
+types:
+
+.. code:: python
+
+    >>> isinstance(async_times_16, acompose)
+    True
+    >>> isinstance(async_times_16, compose)
+    False
+    >>> isinstance(g_of_f, acompose)
+    False
 
 
 Recipes
