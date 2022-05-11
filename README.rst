@@ -15,11 +15,12 @@ and returns callable ``compose`` objects which:
 * will merge when nested, and
 * can be pickled (if all composed callables can be pickled).
 
-This ``compose`` also fails fast with a ``TypeError`` if any
-argument is not callable, or when called with no arguments.
+This ``compose`` also:
 
-This ``compose`` even provides an ``acompose`` variant
-which does the right thing with ``async`` code.
+* fails fast with a ``TypeError`` if any argument is not
+  callable, or when called with no arguments, and
+* comes with an ``acompose`` variant which automatically
+  does the right thing with ``async`` callables.
 
 
 Versioning
