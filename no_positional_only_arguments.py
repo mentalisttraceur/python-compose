@@ -23,7 +23,6 @@ class compose:
 
         Arguments:
             *functions: Functions (or other callables) to compose.
-                Instances of ``compose`` are flattened, not nested.
 
         Raises:
             TypeError:
@@ -86,7 +85,6 @@ class acompose:
 
         Arguments:
             *functions: Functions (or other callables) to compose.
-                Instances of ``acompose`` are flattened, not nested.
 
         Raises:
             TypeError:
