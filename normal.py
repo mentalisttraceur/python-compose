@@ -96,7 +96,7 @@ class acompose:
             if not callable(function):
                 name = _name(self)
                 raise TypeError(repr(name) + ' arguments must be callable')
-            if isinstance(function, acompose):
+            if isinstance(function, (acompose, sacompose)):
                 _functions.append(function.__wrapped__)
                 _functions.extend(function._wrappers)
             else:
@@ -119,9 +119,48 @@ class acompose:
     functions = compose.functions
 
 
+class sacompose:
+    """Sometimes-asynchronous function composition.
+
+    sacompose(f, g)(...) is equivalent to:
+
+        acompose(f, g)(...) if either f or g returns an awaitable object.
+        compose(f, g)(...) if neither f nor g returns an awaitable object.
+    """
+    __init__ = acompose.__init__
+
+    def __call__(self, /, *args, **kwargs):
+        """Call the composed function.
+
+        The return value will either be a normal value if all composed
+        callables return normal values, or an awaitable that needs an
+        `await` if at least one composed callable returns an awaitable.
+        """
+        result = self.__wrapped__(*args, **kwargs)
+        wrappers = iter(self._wrappers)
+        for function in wrappers:
+            if _isawaitable(result):
+                return _finish(wrappers, result)
+            result = function(result)
+        return result
+
+    __repr__ = compose.__repr__
+    functions = compose.functions
+
+
+async def _finish(remaining_functions, first_awaitable_result):
+    result = await first_awaitable_result
+    for function in remaining_functions:
+        result = function(result)
+        if _isawaitable(result):
+            result = await result
+    return result
+
+
 # Portability to some minimal Python implementations:
 try:
     compose.__name__
 except AttributeError:
     compose.__name__ = 'compose'
     acompose.__name__ = 'acompose'
+    sacompose.__name__ = 'sacompose'
