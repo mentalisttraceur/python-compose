@@ -177,7 +177,7 @@ not ``async``, but we want to support ``async``?
     >>> await awaitable_times_4(1) == 4
     >>>
     >>> # Wrong (TypeError from the `==`, and coroutine not awaited):
-    >>> awaitable_times_16(1) == 4
+    >>> awaitable_times_4(1) == 4
     >>> # Wrong (TypeError from the `await`):
     >>> await regular_times_4(1) == 4
 
