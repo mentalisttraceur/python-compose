@@ -41,6 +41,9 @@ Installation
 Usage
 -----
 
+Basics
+~~~~~~
+
 Import ``compose``:
 
 .. code:: python
@@ -96,6 +99,7 @@ And we can inspect all the composed callables:
 ``compose`` instances flatten when nested:
 
 .. code:: python
+
    >>> times_eight_times_two = compose(double, times_eight)
    >>> times_eight_times_two.functions == times_16.functions
    True
@@ -108,7 +112,11 @@ can check if we are looking at a ``compose`` instance:
     >>> isinstance(g_of_f, compose)
     True
 
-We can compose ``async`` code by using ``acompose``:
+``async``/``await``
+~~~~~~~~~~~~~~~~~~~
+
+We can compose ``async`` code by using ``acompose``
+or ``sacompose`` (they are mostly the same):
 
 .. code:: python
 
@@ -116,6 +124,7 @@ We can compose ``async`` code by using ``acompose``:
     >>> from compose import acompose
     >>>
     >>> async def get_data():
+    ...     # pretend this data is fetched from some async API
     ...     await asyncio.sleep(0)
     ...     return 42
     ...
@@ -123,8 +132,8 @@ We can compose ``async`` code by using ``acompose``:
     >>> asyncio.run(get_and_double_data())
     84
 
-``acompose`` can compose any number of ``async``
-and regular functions, in any order:
+``acompose`` and ``sacompose`` can compose any number
+of ``async`` and regular functions, in any order:
 
 .. code:: python
 
@@ -143,18 +152,18 @@ every function we receive to compose is regular,
 not ``async``, but we want to support ``async``?
 
 * ``acompose`` handles that case by returning an
-  awaitable always - so we can just write simple
+  awaitable anyway - so we can just write simple
   code that calls ``await`` in all cases. This
   is the best choice for function composition
   that we *know* will be used in ``async`` code.
 
 * ``sacompose`` handles that case by returning a
   callable which will *sometimes* behave in an
-  ``async`` way by returning an awaitable if any
-  of the composed functions return an awaitable.
-  This is needed to simplify reusable helper
-  code that *can't* know if the composition will
-  be used in regular or ``async`` code:
+  ``async`` way, by returning an awaitable only
+  if any of the composed functions return an
+  awaitable. This is needed to simplify reusable
+  helper code that can't know if it is composing
+  for regular or ``async`` code:
 
   .. code:: python
 
