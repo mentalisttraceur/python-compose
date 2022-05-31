@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.3.0'
+__version__ = '1.3.1'
 
 
 from inspect import isawaitable as _isawaitable
@@ -135,7 +135,7 @@ class sacompose:
     """
     __init__ = acompose.__init__
 
-    def __call__(self, /, *args, **kwargs):
+    def __call__(*args, **kwargs):
         """Call the composed function.
 
         The return value will either be a normal value if all composed
