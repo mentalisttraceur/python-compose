@@ -137,11 +137,13 @@ class sacompose:
         `await` if at least one composed callable returns an awaitable.
         """
         result = self.__wrapped__(*args, **kwargs)
+        if _isawaitable(result):
+            return _finish(self._wrappers, result)
         wrappers = iter(self._wrappers)
         for function in wrappers:
+            result = function(result)
             if _isawaitable(result):
                 return _finish(wrappers, result)
-            result = function(result)
         return result
 
     __repr__ = compose.__repr__
