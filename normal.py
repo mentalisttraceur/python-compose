@@ -3,8 +3,8 @@
 
 """The classic ``compose``, with all the Pythonic features."""
 
-__all__ = ('compose', 'acompose')
-__version__ = '1.2.8'
+__all__ = ('compose', 'acompose', 'sacompose')
+__version__ = '1.3.0'
 
 
 from inspect import isawaitable as _isawaitable
