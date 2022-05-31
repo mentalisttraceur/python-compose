@@ -230,8 +230,7 @@ instances are all distinct types:
 Recipes
 -------
 
-* If you want composing zero functions to be
-  the identity function instead of an error:
+* If you want composing zero functions to be the identity function:
 
   .. code:: python
 
@@ -249,8 +248,7 @@ Recipes
       def rcompose(*functions):
           return compose(*reversed(functions))
 
-* When you need composition to return a
-  normal function, good as a method:
+* When you need composition to return a normal function:
 
   .. code:: python
 
