@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.4.0'
+__version__ = '1.4.1'
 
 
 from inspect import isawaitable as _isawaitable
@@ -186,7 +186,10 @@ class _BoundMethod:
         self._function = function
         self._instance = instance
 
-    def __call__(self, /, *args, **kwargs):
+    def __call__(*args, **kwargs):
+        def __call__(self, *args):
+            return self, args
+        self, args = __call__(*args)
         return self._function(self._instance, *args, **kwargs)
 
     def __get__(self, obj, objtype=None):

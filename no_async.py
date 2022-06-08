@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose',)
-__version__ = '1.4.0'
+__version__ = '1.4.1'
 
 
 try:
@@ -87,7 +87,10 @@ class _BoundMethod(object):
         self._function = function
         self._instance = instance
 
-    def __call__(self, /, *args, **kwargs):
+    def __call__(*args, **kwargs):
+        def __call__(self, *args):
+            return self, args
+        self, args = __call__(*args)
         return self._function(self._instance, *args, **kwargs)
 
     def __get__(self, obj, objtype=None):
