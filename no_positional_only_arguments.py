@@ -177,7 +177,7 @@ async def _finish(remaining_functions, first_awaitable_result):
     return result
 
 
-class _BoundMethod(object):
+class _BoundMethod:
     __class__ = _MethodType
 
     __slots__ = ('_function', '_instance', '__weakref__')
