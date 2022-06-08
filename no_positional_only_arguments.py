@@ -4,11 +4,12 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.3.1'
+__version__ = '1.4.0'
 
 
 from inspect import isawaitable as _isawaitable
 from reprlib import recursive_repr as _recursive_repr
+from types import MethodType as _MethodType
 
 
 def _name(obj):
@@ -54,6 +55,12 @@ class compose:
         for function in self._wrappers:
             result = function(result)
         return result
+
+    def __get__(self, obj, objtype=None):
+        """Get the composed function as a bound method."""
+        if obj is None:
+            return self
+        return _BoundMethod(self, obj)
 
     @_recursive_repr('<...>')
     def __repr__(self):
@@ -122,6 +129,7 @@ class acompose:
         return result
 
     __repr__ = compose.__repr__
+    __get__ = compose.__get__
     functions = compose.functions
 
 
@@ -156,6 +164,7 @@ class sacompose:
         return result
 
     __repr__ = compose.__repr__
+    __get__ = compose.__get__
     functions = compose.functions
 
 
@@ -166,6 +175,28 @@ async def _finish(remaining_functions, first_awaitable_result):
         if _isawaitable(result):
             result = await result
     return result
+
+
+class _BoundMethod(object):
+    __class__ = _MethodType
+
+    __slots__ = ('_function', '_instance', '__weakref__')
+
+    def __init__(self, function, instance):
+        self._function = function
+        self._instance = instance
+
+    def __call__(self, /, *args, **kwargs):
+        return self._function(self._instance, *args, **kwargs)
+
+    def __get__(self, obj, objtype=None):
+        return self
+
+    def __repr__(self):
+        return repr(self._function) + '.__get__(' + repr(self._instance) + ')'
+
+    def __reduce__(self):
+        return (_BoundMethod, (self._function, self._instance))
 
 
 # Portability to some minimal Python implementations:

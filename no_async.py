@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose',)
-__version__ = '1.3.1'
+__version__ = '1.4.0'
 
 
 try:
@@ -13,6 +13,7 @@ try:
 except ImportError:
     def _recursive_repr_if_available(function):
         return function
+from types import MethodType as _MethodType
 
 
 def _name(obj):
@@ -59,6 +60,12 @@ class compose(object):
             result = function(result)
         return result
 
+    def __get__(self, obj, objtype=None):
+        """Get the composed function as a bound method."""
+        if obj is None:
+            return self
+        return _BoundMethod(self, obj)
+
     @_recursive_repr_if_available
     def __repr__(self):
         """Represent the composed function as an unambiguous string."""
@@ -69,6 +76,28 @@ class compose(object):
     def functions(self):
         """Read-only tuple of the composed callables, in order of execution."""
         return (self.__wrapped__,) + tuple(self._wrappers)
+
+
+class _BoundMethod(object):
+    __class__ = _MethodType
+
+    __slots__ = ('_function', '_instance', '__weakref__')
+
+    def __init__(self, function, instance):
+        self._function = function
+        self._instance = instance
+
+    def __call__(self, /, *args, **kwargs):
+        return self._function(self._instance, *args, **kwargs)
+
+    def __get__(self, obj, objtype=None):
+        return self
+
+    def __repr__(self):
+        return repr(self._function) + '.__get__(' + repr(self._instance) + ')'
+
+    def __reduce__(self):
+        return (_BoundMethod, (self._function, self._instance))
 
 
 # Portability to some minimal Python implementations:
