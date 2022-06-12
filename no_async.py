@@ -13,7 +13,6 @@ try:
 except ImportError:
     def _recursive_repr_if_available(function):
         return function
-from types import MethodType as _MethodType
 
 
 def _name(obj):
@@ -79,8 +78,6 @@ class compose(object):
 
 
 class _BoundMethod(object):
-    __class__ = _MethodType
-
     __slots__ = ('_function', '_instance', '__weakref__')
 
     def __init__(self, function, instance):

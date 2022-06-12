@@ -9,7 +9,6 @@ __version__ = '1.4.1'
 
 from inspect import isawaitable as _isawaitable
 from reprlib import recursive_repr as _recursive_repr
-from types import MethodType as _MethodType
 
 
 def _name(obj):
@@ -169,8 +168,6 @@ async def _finish(remaining_functions, first_awaitable_result):
 
 
 class _BoundMethod:
-    __class__ = _MethodType
-
     __slots__ = ('_function', '_instance', '__weakref__')
 
     def __init__(self, function, instance):
