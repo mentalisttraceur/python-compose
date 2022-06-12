@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose',)
-__version__ = '1.4.1'
+__version__ = '1.4.2'
 
 
 try:
