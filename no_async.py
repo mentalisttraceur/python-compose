@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose',)
-__version__ = '1.4.2'
+__version__ = '1.4.3'
 
 
 try:
@@ -98,6 +98,14 @@ class _BoundMethod(object):
 
     def __reduce__(self):
         return (_BoundMethod, (self.__func__, self.__self__))
+
+    # Python 2 used these attribute names:
+    @property
+    def im_func(self):
+        return self.__func__
+    @property
+    def im_self(self):
+        return self.__self__
 
 
 # Portability to some minimal Python implementations:
