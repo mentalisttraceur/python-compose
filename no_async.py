@@ -61,9 +61,17 @@ class compose(object):
 
     def __get__(self, obj, objtype=None):
         """Get the composed function as a bound method."""
-        if obj is None:
+        wrapped = self.__wrapped__
+        try:
+            bind = type(wrapped).__get__
+        except AttributeError:
             return self
-        return _BoundMethod(self, obj)
+        bound_wrapped = bind(wrapped, obj, objtype)
+        if bound_wrapped is wrapped:
+            return self
+        bound_self = type(self)(bound_wrapped)
+        bound_self._wrappers = self._wrappers
+        return bound_self
 
     @_recursive_repr_if_available
     def __repr__(self):
@@ -75,37 +83,6 @@ class compose(object):
     def functions(self):
         """Read-only tuple of the composed callables, in order of execution."""
         return (self.__wrapped__,) + tuple(self._wrappers)
-
-
-class _BoundMethod(object):
-    __slots__ = ('__func__', '__self__', '__weakref__')
-
-    def __init__(self, function, instance):
-        self.__func__ = function
-        self.__self__ = instance
-
-    def __call__(*args, **kwargs):
-        def __call__(self, *args):
-            return self, args
-        self, args = __call__(*args)
-        return self.__func__(self.__self__, *args, **kwargs)
-
-    def __get__(self, obj, objtype=None):
-        return self
-
-    def __repr__(self):
-        return repr(self.__func__) + '.__get__(' + repr(self.__self__) + ')'
-
-    def __reduce__(self):
-        return (_BoundMethod, (self.__func__, self.__self__))
-
-    # Python 2 used these attribute names:
-    @property
-    def im_func(self):
-        return self.__func__
-    @property
-    def im_self(self):
-        return self.__self__
 
 
 # Portability to some minimal Python implementations:
