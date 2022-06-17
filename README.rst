@@ -15,9 +15,8 @@ and returns callable ``compose`` objects which:
 * will merge when nested, and
 * can be pickled (if all composed callables can be pickled).
 
-For ``async``/``await`` support, the right behavior of
-function composition depends on what you are doing, so
-variants of ``compose`` are included for those cases.
+For ``async``/``await`` support, different variants of
+``compose`` are included.
 
 
 Versioning
