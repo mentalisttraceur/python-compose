@@ -235,33 +235,3 @@ instances are all distinct types:
     True
     >>> isinstance(awaitable_times_4, (compose, acompose))
     False
-
-
-Recipes
--------
-
-* If you want composing zero functions to be the identity function:
-
-  .. code:: python
-
-      from functools import partial
-
-      def identity(x):
-          return x
-
-      icompose = partial(compose, identity)
-
-* To compose arguments in reverse order:
-
-  .. code:: python
-
-      def rcompose(*functions):
-          return compose(*reversed(functions))
-
-* When you need composition to return a normal function:
-
-  .. code:: python
-
-      def fcompose(*functions):
-          composed = compose(*functions)
-          return lambda *args, **kwargs: composed(*args, **kwargs)
