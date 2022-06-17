@@ -15,9 +15,6 @@ and returns callable ``compose`` objects which:
 * will merge when nested, and
 * can be pickled (if all composed callables can be pickled).
 
-This ``compose`` also throws a ``TypeError`` when called
-with no arguments or with any non-callable arguments.
-
 For ``async``/``await`` support, the right behavior of
 function composition depends on what you are doing, so
 variants of ``compose`` are included for those cases.
@@ -111,6 +108,21 @@ can check if we are looking at a ``compose`` instance:
 
     >>> isinstance(g_of_f, compose)
     True
+
+``compose`` raises a ``TypeError`` when called with
+no arguments or with any non-callable arguments:
+
+.. code:: python
+
+    >>> compose()
+    Traceback (most recent call last):
+        ...
+    TypeError: 'compose' needs at least one argument
+    >>> compose(increment, 'oops', increment)
+    Traceback (most recent call last):
+        ...
+    TypeError: 'compose' arguments must be callable
+
 
 ``async``/``await``
 ~~~~~~~~~~~~~~~~~~~
