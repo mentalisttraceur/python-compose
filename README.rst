@@ -184,14 +184,10 @@ not ``async``, but we want to support ``async``?
     >>> regular_times_4 = sacompose(double, double)
     >>> awaitable_times_4 = sacompose(double, async_double)
     >>>    
-    >>> # Right:
     >>> regular_times_4(1) == 4
-    >>> await awaitable_times_4(1) == 4
-    >>>
-    >>> # Wrong (TypeError from the `==`, and coroutine not awaited):
-    >>> awaitable_times_4(1) == 4
-    >>> # Wrong (TypeError from the `await`):
-    >>> await regular_times_4(1) == 4
+    True
+    >>> asyncio.run(awaitable_times_4(1)) == 4
+    True
 
 ``acompose`` and ``sacompose`` instances flatten when nested:
 
