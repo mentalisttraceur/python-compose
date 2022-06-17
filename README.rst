@@ -118,6 +118,9 @@ no arguments or with any non-callable arguments:
     Traceback (most recent call last):
         ...
     TypeError: 'compose' needs at least one argument
+
+.. code:: python
+
     >>> compose(increment, 'oops', increment)
     Traceback (most recent call last):
         ...
