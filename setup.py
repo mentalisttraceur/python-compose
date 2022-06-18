@@ -44,6 +44,12 @@ else:
         source_file = 'normal.py'
     elif bdist_wheel_tag_check('py35'):
         source_file = 'no_positional_only_arguments.py'
+    elif bdist_wheel_tag_check('py2.py30'):
+        source_file = 'no_async.py'
+    elif sys.version_info >= (3, 8):
+        source_file = 'normal.py'
+    elif sys.version_info >= (3, 5):
+        source_file = 'no_positional_only_arguments.py'
     else:
         source_file = 'no_async.py'
     source_path = os.path.join(project_directory, source_file)
