@@ -18,3 +18,4 @@ test:
 	cp no_async.py compose.py
 	pytest test.py
 	rm compose.py
+	pytest README.rst

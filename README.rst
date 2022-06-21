@@ -44,7 +44,7 @@ Import ``compose``:
 
 .. code:: python
 
-    from compose import compose
+    >>> from compose import compose
 
 All the usual function composition you know and love:
 
@@ -67,7 +67,7 @@ Of course any number of functions can be composed:
     >>> def double(x):
     ...     return x * 2
     ...
-    >>> times_eight = compose(douple, double, double)
+    >>> times_eight = compose(double, double, double)
     >>> times_16 = compose(double, double, double, double)
 
 We still get the correct signature introspection:
@@ -90,7 +90,7 @@ And we can inspect all the composed callables:
 .. code:: python
 
     >>> g_of_f.functions  # in order of execution:
-    (<function f at 0x4048e6f0>, <function g at 0x405228e8>)
+    (<function f at 0x...>, <function g at 0x...>)
 
 ``compose`` instances flatten when nested:
 
@@ -210,13 +210,13 @@ into ``acompose`` and ``sacompose``, and vice versa:
 .. code:: python
 
     >>> acompose(g_of_f).functions
-    (compose(<function f at 0x4048e6f0>, <function g at 0x405228e8>),)
+    (compose(<function g at 0x...>, <function f at 0x...>),)
     >>> sacompose(g_of_f).functions
-    (compose(<function f at 0x4048e6f0>, <function g at 0x405228e8>),)
+    (compose(<function g at 0x...>, <function f at 0x...>),)
     >>> compose(acompose(g, f)).functions
-    (acompose(<function f at 0x4048e6f0>, <function g at 0x405228e8>),)
+    (acompose(<function g at 0x...>, <function f at 0x...>),)
     >>> compose(sacompose(g, f)).functions
-    (sacompose(<function f at 0x4048e6f0>, <function g at 0x405228e8>),)
+    (sacompose(<function g at 0x...>, <function f at 0x...>),)
 
 ``compose``, ``acompose``, and ``sacompose``
 instances are all distinct types:
