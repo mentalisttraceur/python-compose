@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.4.6'
+__version__ = '1.4.7'
 
 
 from inspect import isawaitable as _isawaitable
@@ -30,13 +30,11 @@ class compose:
                 If any argument is not callable.
         """
         if not functions:
-            name = _name(self)
-            raise TypeError(repr(name) + ' needs at least one argument')
+            raise TypeError(_name(self) + '() needs at least one argument')
         _functions = []
         for function in reversed(functions):
             if not callable(function):
-                name = _name(self)
-                raise TypeError(repr(name) + ' arguments must be callable')
+                raise TypeError(_name(self) + '() arguments must be callable')
             if isinstance(function, compose):
                 _functions.append(function.__wrapped__)
                 _functions.extend(function._wrappers)
@@ -106,13 +104,11 @@ class acompose:
                 If any argument is not callable.
         """
         if not functions:
-            name = _name(self)
-            raise TypeError(repr(name) + ' needs at least one argument')
+            raise TypeError(_name(self) + '() needs at least one argument')
         _functions = []
         for function in reversed(functions):
             if not callable(function):
-                name = _name(self)
-                raise TypeError(repr(name) + ' arguments must be callable')
+                raise TypeError(_name(self) + '() arguments must be callable')
             if isinstance(function, (acompose, sacompose)):
                 _functions.append(function.__wrapped__)
                 _functions.extend(function._wrappers)
