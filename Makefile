@@ -13,7 +13,7 @@ clean:
 test:
 	cp normal.py compose.py
 	pytest test.py
-	pytest README.rst
+	PYTHONPATH=. pytest README.rst
 	cp no_positional_only_arguments.py compose.py
 	pytest test.py
 	cp no_async.py compose.py
