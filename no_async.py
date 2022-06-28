@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose',)
-__version__ = '1.4.7'
+__version__ = '1.4.8'
 
 
 try:
@@ -40,8 +40,7 @@ class compose(object):
             if not callable(function):
                 raise TypeError(_name(self) + '() arguments must be callable')
             if isinstance(function, compose):
-                _functions.append(function.__wrapped__)
-                _functions.extend(function._wrappers)
+                _functions.extend(function.functions)
             else:
                 _functions.append(function)
         self.__wrapped__ = _functions[0]

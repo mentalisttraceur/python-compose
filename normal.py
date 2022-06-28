@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.4.7'
+__version__ = '1.4.8'
 
 
 from inspect import isawaitable as _isawaitable
@@ -36,8 +36,7 @@ class compose:
             if not callable(function):
                 raise TypeError(_name(self) + '() arguments must be callable')
             if isinstance(function, compose):
-                _functions.append(function.__wrapped__)
-                _functions.extend(function._wrappers)
+                _functions.extend(function.functions)
             else:
                 _functions.append(function)
         self.__wrapped__ = _functions[0]
@@ -107,8 +106,7 @@ class acompose:
             if not callable(function):
                 raise TypeError(_name(self) + '() arguments must be callable')
             if isinstance(function, (acompose, sacompose)):
-                _functions.append(function.__wrapped__)
-                _functions.extend(function._wrappers)
+                _functions.extend(function.functions)
             else:
                 _functions.append(function)
         self.__wrapped__ = _functions[0]
