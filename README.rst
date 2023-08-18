@@ -129,8 +129,7 @@ no arguments or with any non-callable arguments:
 ``async``/``await``
 ~~~~~~~~~~~~~~~~~~~
 
-We can compose ``async`` code by using ``acompose``
-or ``sacompose`` (they are mostly the same):
+We can compose ``async`` code by using ``acompose``:
 
 .. code:: python
 
@@ -146,8 +145,8 @@ or ``sacompose`` (they are mostly the same):
     >>> asyncio.run(get_and_double_data())
     84
 
-``acompose`` and ``sacompose`` can compose any number
-of ``async`` and regular functions, in any order:
+``acompose`` can compose any number of ``async``
+and regular functions, in any order:
 
 .. code:: python
 
@@ -159,37 +158,28 @@ of ``async`` and regular functions, in any order:
     >>> asyncio.run(async_times_16(1))
     16
 
-``sacompose`` provides a different way of handling
-a corner case that arises when composing functions
-that we get from users or other code: what if
-every function we receive to compose is regular,
-not ``async``, but we want to support ``async``?
+``acompose`` instances always return awaitable values,
+even if none of the composed functions are ``async``:
 
-* ``acompose`` handles that case by returning an
-  awaitable anyway - so we can just write simple
-  code that calls ``await`` in all cases. This
-  is the best choice for function composition
-  that we *know* will be used in ``async`` code.
+    >>> awaitable_times_16 = acompose(double, double, double, double)
+    >>> asyncio.run(async_times_16(1))
+    16
 
-* ``sacompose`` handles that case by returning a
-  callable which will *sometimes* behave in an
-  ``async`` way, by returning an awaitable only
-  if any of the composed functions return an
-  awaitable. This is needed to simplify reusable
-  helper code that can't know if it is composing
-  for regular or ``async`` code:
+``sacompose`` is like ``acompose``, but ``sacompose``
+instances return an awaitable value only if any of
+the composed functions return an awaitable value:
 
-  .. code:: python
+.. code:: python
 
     >>> from compose import sacompose
     >>>
     >>> regular_times_4 = sacompose(double, double)
     >>> awaitable_times_4 = sacompose(double, async_double)
     >>>    
-    >>> regular_times_4(1) == 4
-    True
-    >>> asyncio.run(awaitable_times_4(1)) == 4
-    True
+    >>> regular_times_4(1)
+    4
+    >>> asyncio.run(awaitable_times_4(1))
+    4
 
 ``acompose`` and ``sacompose`` instances flatten when nested:
 
