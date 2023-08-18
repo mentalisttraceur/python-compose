@@ -33,6 +33,13 @@ Installation
 
     pip install compose
 
+For static type checking, also install `the type hint
+stubs <https://pypi.org/project/compose-stubs>`_:
+
+::
+
+    pip install compose-stubs
+
 
 Usage
 -----
@@ -160,6 +167,8 @@ and regular functions, in any order:
 
 ``acompose`` instances always return awaitable values,
 even if none of the composed functions are ``async``:
+
+.. code:: python
 
     >>> awaitable_times_16 = acompose(double, double, double, double)
     >>> asyncio.run(async_times_16(1))
