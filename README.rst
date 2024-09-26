@@ -190,8 +190,8 @@ the composed functions return an awaitable value:
     >>> asyncio.run(awaitable_times_4(1))
     4
 
-If |markcoroutinefunction|_ (added in Python 3.12) is
-available, ``acompose`` and ``sacompose`` instances
+If |markcoroutinefunction|_ is available,
+``acompose`` and ``sacompose`` instances
 will be correctly detected as coroutine functions:
 
 .. |markcoroutinefunction| replace:: ``inspect.markcoroutinefunction``
