@@ -201,6 +201,8 @@ will be correctly detected as coroutine functions:
 
     >>> inspect.iscoroutinefunction(async_times_16)
     True
+    >>> inspect.iscoroutinefunction(awaitable_times_16)
+    True
     >>> inspect.iscoroutinefunction(regular_times_4)
     False
     >>> inspect.iscoroutinefunction(async_times_4)
