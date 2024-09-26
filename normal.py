@@ -4,12 +4,17 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.5.0'
+__version__ = '1.6.0'
 
 
 from inspect import isawaitable as _isawaitable
+from inspect import iscoroutinefunction as _iscoroutinefunction
 from reprlib import recursive_repr as _recursive_repr
-
+try:
+    from inspect import markcoroutinefunction as _markcoroutinefunction
+except ImportError:
+    def _markcoroutinefunction(function):
+        pass
 
 def _name(obj):
     return type(obj).__name__
@@ -111,6 +116,7 @@ class acompose:
                 _functions.append(function)
         self.__wrapped__ = _functions[0]
         self._wrappers = tuple(_functions[1:])
+        _markcoroutinefunction(self)
 
     async def __call__(self, /, *args, **kwargs):
         """Call the composed function."""
@@ -136,7 +142,32 @@ class sacompose:
         acompose(f, g)(...) if either f or g returns an awaitable object.
         compose(f, g)(...) if neither f nor g returns an awaitable object.
     """
-    __init__ = acompose.__init__
+    def __init__(self, *functions):
+        """Initialize the composed function.
+
+        Arguments:
+            *functions: Functions (or other callables) to compose.
+
+        Raises:
+            TypeError:
+                If no arguments are given.
+                If any argument is not callable.
+        """
+        if not functions:
+            raise TypeError(_name(self) + '() needs at least one argument')
+        _functions = []
+        for function in reversed(functions):
+            if not callable(function):
+                raise TypeError(_name(self) + '() arguments must be callable')
+            if (_iscoroutinefunction(function)
+            or  _iscoroutinefunction(type(function).__call__)):
+                _markcoroutinefunction(self)
+            if isinstance(function, (acompose, sacompose)):
+                _functions.extend(function.functions)
+            else:
+                _functions.append(function)
+        self.__wrapped__ = _functions[0]
+        self._wrappers = tuple(_functions[1:])
 
     def __call__(self, /, *args, **kwargs):
         """Call the composed function.

@@ -190,6 +190,21 @@ the composed functions return an awaitable value:
     >>> asyncio.run(awaitable_times_4(1))
     4
 
+If |markcoroutinefunction|_ (added in Python 3.12) is available,
+``sacompose`` instances work correctly with |iscoroutinefunction|_:
+
+.. |iscoroutinefunction| replace:: ``inspect.iscoroutinefunction``
+.. _iscoroutinefunction:  https://docs.python.org/3/library/inspect.html#inspect.iscoroutinefunction
+.. |markcoroutinefunction| replace:: ``inspect.markcoroutinefunction``
+.. _markcoroutinefunction:  https://docs.python.org/3/library/inspect.html#inspect.markcoroutinefunction
+
+.. code:: python
+
+    >>> inspect.iscoroutinefunction(regular_times_4)
+    False
+    >>> inspect.iscoroutinefunction(awaitable_times_4)
+    True
+
 ``acompose`` and ``sacompose`` instances flatten when nested:
 
 .. code:: python
