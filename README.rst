@@ -184,7 +184,7 @@ the composed functions return an awaitable value:
     >>>
     >>> regular_times_4 = sacompose(double, double)
     >>> awaitable_times_4 = sacompose(double, async_double)
-    >>>    
+    >>>
     >>> regular_times_4(1)
     4
     >>> asyncio.run(awaitable_times_4(1))
