@@ -4,7 +4,7 @@
 """The classic ``compose``, with all the Pythonic features."""
 
 __all__ = ('compose', 'acompose', 'sacompose')
-__version__ = '1.6.0'
+__version__ = '1.6.1'
 
 
 from inspect import isawaitable as _isawaitable
