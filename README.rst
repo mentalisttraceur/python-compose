@@ -183,11 +183,11 @@ the composed functions return an awaitable value:
     >>> from compose import sacompose
     >>>
     >>> regular_times_4 = sacompose(double, double)
-    >>> awaitable_times_4 = sacompose(double, async_double)
+    >>> async_times_4 = sacompose(double, async_double)
     >>>
     >>> regular_times_4(1)
     4
-    >>> asyncio.run(awaitable_times_4(1))
+    >>> asyncio.run(async_times_4(1))
     4
 
 If |markcoroutinefunction|_ is available,
@@ -203,7 +203,7 @@ will be correctly detected as coroutine functions:
     True
     >>> inspect.iscoroutinefunction(regular_times_4)
     False
-    >>> inspect.iscoroutinefunction(awaitable_times_4)
+    >>> inspect.iscoroutinefunction(async_times_4)
     True
 
 ``acompose`` and ``sacompose`` instances flatten when nested:
@@ -246,7 +246,7 @@ instances are all distinct types:
     True
     >>> isinstance(async_times_16, (compose, sacompose))
     False
-    >>> isinstance(awaitable_times_4, sacompose)
+    >>> isinstance(async_times_4, sacompose)
     True
-    >>> isinstance(awaitable_times_4, (compose, acompose))
+    >>> isinstance(async_times_4, (compose, acompose))
     False
