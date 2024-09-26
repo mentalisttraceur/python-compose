@@ -171,7 +171,7 @@ even if none of the composed functions are ``async``:
 .. code:: python
 
     >>> awaitable_times_16 = acompose(double, double, double, double)
-    >>> asyncio.run(async_times_16(1))
+    >>> asyncio.run(awaitable_times_16(1))
     16
 
 ``sacompose`` is like ``acompose``, but ``sacompose``
